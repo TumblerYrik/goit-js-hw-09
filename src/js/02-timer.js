@@ -1,5 +1,6 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+// import Notiflix from 'notiflix';
 
 const startButton = document.querySelector('[data-start]');
 const daysValue = document.querySelector('[data-days]');
@@ -8,9 +9,39 @@ const minutesValue = document.querySelector('[data-minutes]');
 const secondsValue = document.querySelector('[data-seconds]');
 
 let countdownInterval;
+let selectedDate; 
 
+const options = {
+    enableTime: true,
+    time_24hr: true,
+    defaultDate: new Date(),
+    minuteIncrement: 1,
+    onClose(selectedDates) {
+        selectedDate = selectedDates[0];
+        console.log(selectedDate);
+    },
+};
 
-function updateTimer(endTime) {
+flatpickr('#datetime-picker', options);
+
+startButton.addEventListener('click', () => {
+    if (!selectedDate) {
+        window.alert('Please choose a date first');
+        return;
+    }
+
+    const now = new Date();
+
+    if (selectedDate <= now) {
+        window.alert('Please choose a date in the future');
+        startButton.disabled = true;
+    } else {
+        startButton.disabled = false;
+        startTimer(selectedDate);
+    }
+});
+
+function startTimer(endTime) {
     function updateDisplay() {
         const timeLeft = endTime - Date.now();
 
@@ -35,25 +66,3 @@ function updateTimer(endTime) {
     updateDisplay();
     countdownInterval = setInterval(updateDisplay, 1000);
 }
-
-startButton.addEventListener('click', () => {
-    const selectedDate = flatpickr('#datetime-picker', {
-        enableTime: true,
-        time_24hr: true,
-        minuteIncrement: 1,
-        onClose(selectedDates) {
-            if (!selectedDates[0]) return;
-
-            const chosenDate = selectedDates[0];
-            const now = new Date();
-
-            if (chosenDate <= now) {
-                window.alert('Please choose a date in the future');
-                startButton.disabled = true;
-            } else {
-                startButton.disabled = false;
-                updateTimer(chosenDate.getTime());
-            }
-        },
-    });
-});
