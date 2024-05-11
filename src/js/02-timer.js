@@ -21,7 +21,8 @@ const options = {
         console.log(selectedDate);
     },
 };
-
+startButton.setAttribute('disabled', true);
+startButton.removeAttribute('disabled');
 flatpickr('#datetime-picker', options);
 
 startButton.addEventListener('click', () => {
