@@ -1,6 +1,5 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-// import Notiflix from 'notiflix';
 
 const startButton = document.querySelector('[data-start]');
 const daysValue = document.querySelector('[data-days]');
@@ -9,7 +8,9 @@ const minutesValue = document.querySelector('[data-minutes]');
 const secondsValue = document.querySelector('[data-seconds]');
 
 let countdownInterval;
-let selectedDate; 
+let selectedDate;
+
+startButton.setAttribute('disabled', true);
 
 const options = {
     enableTime: true,
@@ -19,13 +20,18 @@ const options = {
     onClose(selectedDates) {
         selectedDate = selectedDates[0];
         console.log(selectedDate);
+
+        startButton.removeAttribute('disabled');
     },
 };
-startButton.setAttribute('disabled', true);
-startButton.removeAttribute('disabled');
+
+flatpickr('#datetime-picker', options);
+
+
 flatpickr('#datetime-picker', options);
 
 startButton.addEventListener('click', () => {
+    console.log('Start button clicked');
     if (!selectedDate) {
         window.alert('Please choose a date first');
         return;
@@ -38,11 +44,13 @@ startButton.addEventListener('click', () => {
         startButton.disabled = true;
     } else {
         startButton.disabled = false;
-        startTimer(selectedDate);
     }
+
+    startTimer(selectedDate);
 });
 
 function startTimer(endTime) {
+    startButton.disabled = true;
     function updateDisplay() {
         const timeLeft = endTime - Date.now();
 
